@@ -47,15 +47,17 @@ export class Database {
 
     update (table, id, updatedValues) {
         const rowIndex = this.#database[table].findIndex(row => row.id === id);
-        console.log(rowIndex);
 
         if (rowIndex > -1) {
-            // const data = this.#database[table][rowIndex]
             Object.entries(updatedValues).some(([key, value]) => {
                 this.#database[table][rowIndex][key] = value
             })
             this.#persist()
+            const data = this.#database[table][rowIndex]
+            return JSON.stringify(data);
         }
+
+        return JSON.stringify({message: 'id dont existis'})
     }
 
     complete (table, id, data) {

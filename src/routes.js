@@ -22,7 +22,13 @@ export const routes = [
 		method: 'POST',
 		path: buildRoutePaths('/tasks'),
 		handle: (req, res) => {
-			const { title, description} = req.body;
+			const { title, description } = req.body;
+
+			if (!title || !description) {
+				return res.writeHead(400).end(JSON.stringify(
+					{message: 'you must send description and title!'}
+				));
+			}
 			
 			database.insert('tasks', {
 				id: randomUUID(),
@@ -32,7 +38,9 @@ export const routes = [
 				created_at: new Date(),
 				updated_at: new Date()
 			});
-			return res.writeHead(201).end('Task created successfully');
+			return res.writeHead(201).end(JSON.stringify({
+				message: 'Task created successfully'
+			}));
 		}
 	},
 	{
@@ -42,11 +50,12 @@ export const routes = [
 			const { id } = req.params;
 			const body = req.body;
 			
-			database.update('tasks', id, {
+			const result = database.update('tasks', id, {
 				...body,
 				updated_at: new Date()
 			});
-			return res.writeHead(204).end('Task updated successfully');
+			
+			return res.writeHead(200).end(result);
 		}
 	},
 	{
@@ -55,11 +64,11 @@ export const routes = [
 		handle: (req, res) => {
 			const { id } = req.params;
 			
-			database.update('tasks', id, {
+			const result = database.update('tasks', id, {
 				completed_at: new Date(),
 				updated_at: new Date()
 			});
-			return res.writeHead(204).end('Task completed successfully');
+			return res.writeHead(200).end(result);
 		}
 	},
 	{
